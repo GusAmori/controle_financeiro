@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#111827" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Meu Controle de Gastos</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">FINANÇAS PESSOAIS</p>
+        <h1>Meu Controle</h1>
+      </div>
+      <button id="installBtn" class="ghost-btn hidden">Instalar</button>
+    </header>
+
+    <main>
+      <section id="dashboard" class="screen active">
+        <div class="month-row">
+          <button id="prevMonth" class="icon-btn" aria-label="Mês anterior">‹</button>
+          <div>
+            <span class="muted">Resumo do mês</span>
+            <strong id="currentMonthLabel"></strong>
+          </div>
+          <button id="nextMonth" class="icon-btn" aria-label="Próximo mês">›</button>
+        </div>
+
+        <div class="summary-grid">
+          <article class="card salary-card">
+            <span>Salário</span>
+            <strong id="salaryValue">R$ 0,00</strong>
+            <button id="editSalaryBtn" class="link-btn">Definir salário</button>
+          </article>
+          <article class="card">
+            <span>Gastos do mês</span>
+            <strong id="expenseValue">R$ 0,00</strong>
+            <small id="expenseCount">0 lançamentos</small>
+          </article>
+          <article class="card balance-card">
+            <span>Saldo restante</span>
+            <strong id="balanceValue">R$ 0,00</strong>
+            <small id="balanceHint">Salário menos gastos</small>
+          </article>
+        </div>
+
+        <section class="panel">
+          <div class="panel-heading">
+            <div>
+              <span class="muted">Onde você gasta mais</span>
+              <h2>Por categoria</h2>
+            </div>
+            <span id="topCategoryBadge" class="badge">Sem gastos</span>
+          </div>
+          <div id="categoryChart" class="bars"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading">
+            <div>
+              <span class="muted">Movimentações</span>
+              <h2>Gastos do mês</h2>
+            </div>
+            <button id="openExpenseFromList" class="small-btn">+ Adicionar</button>
+          </div>
+          <div id="expenseList" class="list"></div>
+        </section>
+      </section>
+
+      <section id="add" class="screen">
+        <section class="panel form-panel">
+          <div class="panel-heading">
+            <div>
+              <span class="muted">Novo lançamento</span>
+              <h2>Adicionar gasto</h2>
+            </div>
+          </div>
+
+          <form id="expenseForm">
+            <label>
+              Descrição
+              <input id="description" required maxlength="80" placeholder="Ex.: Notebook, mercado, gasolina" />
+            </label>
+
+            <div class="two-cols">
+              <label>
+                Categoria
+                <select id="category">
+                  <option>Alimentação</option>
+                  <option>Moradia</option>
+                  <option>Transporte</option>
+                  <option>Saúde</option>
+                  <option>Educação</option>
+                  <option>Lazer</option>
+                  <option>Compras</option>
+                  <option>Assinaturas</option>
+                  <option>Outros</option>
+                </select>
+              </label>
+              <label>
+                Data da compra
+                <input id="purchaseDate" type="date" required />
+              </label>
+            </div>
+
+            <label>
+              Valor total da compra
+              <input id="amount" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="0,00" required />
+            </label>
+
+            <div class="segmented" role="group" aria-label="Tipo de pagamento">
+              <button type="button" class="segment active" data-type="avista">À vista</button>
+              <button type="button" class="segment" data-type="parcelado">Parcelado</button>
+            </div>
+
+            <div id="installmentFields" class="installment-box hidden">
+              <div class="two-cols">
+                <label>
+                  Total de parcelas
+                  <input id="installmentCount" type="number" min="2" max="120" value="2" />
+                </label>
+                <label>
+                  Parcelas já pagas
+                  <input id="installmentsPaid" type="number" min="0" value="0" />
+                </label>
+              </div>
+              <label>
+                Mês da 1ª parcela
+                <input id="firstInstallmentMonth" type="month" />
+              </label>
+              <div id="installmentPreview" class="preview"></div>
+            </div>
+
+            <button type="submit" class="primary-btn">Salvar gasto</button>
+          </form>
+        </section>
+      </section>
+
+      <section id="installments" class="screen">
+        <section class="panel">
+          <div class="panel-heading">
+            <div>
+              <span class="muted">Acompanhamento</span>
+              <h2>Compras parceladas</h2>
+            </div>
+          </div>
+          <div id="installmentList" class="installment-list"></div>
+        </section>
+      </section>
+
+      <section id="settings" class="screen">
+        <section class="panel form-panel">
+          <span class="muted">Configurações</span>
+          <h2>Salário mensal</h2>
+          <p class="helper">O salário é salvo por mês. Assim você pode ter valores diferentes em meses diferentes.</p>
+          <form id="salaryForm">
+            <label>
+              Mês
+              <input id="salaryMonth" type="month" required />
+            </label>
+            <label>
+              Salário líquido
+              <input id="salaryInput" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0,00" required />
+            </label>
+            <button class="primary-btn" type="submit">Salvar salário</button>
+          </form>
+        </section>
+
+        <section class="panel danger-panel">
+          <h2>Dados</h2>
+          <p class="helper">Os dados ficam salvos somente neste aparelho/navegador.</p>
+          <button id="exportBtn" class="secondary-btn">Exportar backup</button>
+          <label class="secondary-btn file-btn">
+            Importar backup
+            <input id="importInput" type="file" accept="application/json" />
+          </label>
+          <button id="clearBtn" class="danger-btn">Apagar todos os dados</button>
+        </section>
+      </section>
+    </main>
+
+    <nav class="bottom-nav">
+      <button class="nav-btn active" data-screen="dashboard"><span>⌂</span><small>Resumo</small></button>
+      <button class="nav-btn" data-screen="add"><span>＋</span><small>Lançar</small></button>
+      <button class="nav-btn" data-screen="installments"><span>◷</span><small>Parcelas</small></button>
+      <button class="nav-btn" data-screen="settings"><span>⚙</span><small>Ajustes</small></button>
+    </nav>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

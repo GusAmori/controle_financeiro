@@ -1,0 +1,12 @@
+{
+  "name": "Meu Controle de Gastos",
+  "short_name": "Meu Controle",
+  "description": "Controle de salário, gastos e compras parceladas.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f3f4f6",
+  "theme_color": "#111827",
+  "icons": [
+    {"src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable"}
+  ]
+}
